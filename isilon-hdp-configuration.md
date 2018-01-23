@@ -206,7 +206,7 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
 
 ### Install throuth Internet  
 ```shell
-[root@linux02 ~]# wget http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.1.0/ambari.repo -O /tmp/ambari.repo
+[root@linux02 ~]# wget http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.1.0/ambari.repo -O /etc/yum.repos.d/ambari.repo
 [root@linux02 ~]# yum install ambari-server
 ```
 
@@ -284,6 +284,8 @@ Ambari Management Console: http://192.168.64.12:8080
 User and Password: admin/admin
 
 ### Add HDP Host with RSA Private Key  
+Copy the entire contents of the id_rsa file, including the leading dash characters, into the Host Registration Information box in Install Options screen of the Ambari wizard.  
+
 ```shell
 [root@linux02 ~]# ssh-keygen 
 [root@linux02 ~]# cat ~/.ssh/id_rsa
@@ -298,30 +300,32 @@ linux03.isilon.com
 Back and add Isilon smartconnect zone name without Authoration.
 zone1-hdp.hdfs.isilon.com
 
+On the Install Options screen, add a line in the Target Hosts box and type the fully qualified name of the Isilon SmartConnect zone name, and then select Perform manual registration on hosts and do not use SSH.
+
 ### Customize the Service you Need  
-HDFS, YARN, Zookeeper
+Sellect HDFS, YARN, Zookeeper etc.
 
 
 ### Assign Masters  
 
-On the Assign Masters screen, assign the NameNode and SNameNode components to the Isilon OneFS cluster. Remove the other Isilon OneFS cluster components.
-Assign all other master components to Hadoop client host(s).
+On the Assign Masters screen, assign the NameNode and SNameNode components to the Isilon OneFS cluster.   
+Remove the other Isilon OneFS cluster components. Assign all other master components to Hadoop client host(s).  
 
 ### Assign Slaves and Clients
-On the Assign Slaves and Clients screen, ensure that DataNode is selected for the Isilon OneFS cluster, and cleared for all the other hosts.
-Ensure that the Client option is selected for all the other desired hosts and cleared for the Isilon OneFS cluster. Clear any other components that are assigned to the Isilon OneFS cluster.
+On the Assign Slaves and Clients screen, ensure that DataNode is selected for the Isilon OneFS cluster, and cleared for all the other hosts.  
+Ensure that the Client option is selected for all the other desired hosts and cleared for the Isilon OneFS cluster. Clear any other components that are assigned to the Isilon OneFS cluster.  
 
 
 ### On the Customize Services screen
-For the HDFS service, on the Advanced settings tab, update the following settings in the Advanced hdfs site settings section:
-a. Change the dfs.namenode.http-address PORT to the FQDN for the SmartConnect Zone Name followed by port 8082 from 50070.
-b. Change the dfs.namenode.https-address to the FQDN for the SmartConnect Zone Name followed by port 8080 from 50470.
-c. Add a property in the Custom hdfs-site field by the name dfs.client-write-packet-size.
-d. Set dfs.client-write-packet-size to 131072.
-e. Change the dfs.datanode.http.address port from 50075 to 8082. This setting prevents an error that generates a traceback in ambari-server.log each time you log in to the Ambari server.
+For the HDFS service, on the Advanced settings tab, update the following settings in the Advanced hdfs site settings section:  
+a. Change the dfs.namenode.http-address PORT to the FQDN for the SmartConnect Zone Name followed by port 8082 from 50070.  
+b. Change the dfs.namenode.https-address to the FQDN for the SmartConnect Zone Name followed by port 8080 from 50470.  
+c. Add a property in the Custom hdfs-site field by the name dfs.client-write-packet-size.  
+d. Set dfs.client-write-packet-size to 131072.  
+e. Change the dfs.datanode.http.address port from 50075 to 8082. This setting prevents an error that generates a traceback in ambari-server.log each time you log in to the Ambari server.  
 
-For YARN Advance Setting
-dfs.client-write-packet-size 131072
+For YARN Advance Setting  
+dfs.client-write-packet-size 131072  
 
 
 ## 4.Test HDFS  
